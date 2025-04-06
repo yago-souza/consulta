@@ -1,4 +1,7 @@
 package com.fiap.postech.consultas.application.services;
 
-public class NotificacaoService {
+import com.fiap.postech.consultas.domain.Consulta;
+
+public interface NotificacaoService {
+    void enviarLembreteConsulta(Consulta consulta);
 }
