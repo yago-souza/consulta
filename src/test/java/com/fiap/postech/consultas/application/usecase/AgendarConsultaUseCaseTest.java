@@ -35,6 +35,8 @@ class AgendarConsultaUseCaseTest {
         when(consultaRepository.buscarConsultasParaHorario(consulta.getDataHora())).thenReturn(List.of());
 
         assertDoesNotThrow(() -> useCase.executar(consulta));
+
+        assertEquals(StatusConsulta.AGENDADA, consulta.getStatus());
         verify(consultaRepository).salvar(consulta);
     }
 
@@ -51,11 +53,11 @@ class AgendarConsultaUseCaseTest {
     void deveLancarExcecaoQuandoMedicoTiverConflitoDeHorario() {
         Consulta novaConsulta = criarConsultaValida();
 
-        // Simula consulta existente com mesmo médico e horário
         Consulta consultaExistente = new Consulta(
                 UUID.randomUUID(), // paciente diferente
-                novaConsulta.getMedicoId(), // mesmo médico
-                novaConsulta.getDataHora(), "Outro exame", StatusConsulta.AGENDADA
+                novaConsulta.getMedicoId(),
+                novaConsulta.getDataHora(),
+                "Outro exame"
         );
 
         when(consultaRepository.buscarConsultasParaHorario(novaConsulta.getDataHora()))
@@ -65,17 +67,17 @@ class AgendarConsultaUseCaseTest {
         assertEquals("O médico já possui uma consulta nesse horário.", exception.getMessage());
     }
 
-
     @Test
     void deveLancarExcecaoQuandoPacienteTiverConflitoDeHorario() {
         Consulta novaConsulta = criarConsultaValida();
 
-        // Simula consulta existente com mesmo paciente e horário
         Consulta consultaExistente = new Consulta(
-                novaConsulta.getPacienteId(), // mesmo paciente
-                UUID.randomUUID(), // médico diferente
-                novaConsulta.getDataHora(), "Outro exame", StatusConsulta.AGENDADA
+                novaConsulta.getPacienteId(),
+                UUID.randomUUID(),
+                novaConsulta.getDataHora(),
+                "Outro exame"
         );
+
         when(consultaRepository.buscarConsultasParaHorario(novaConsulta.getDataHora()))
                 .thenReturn(List.of(consultaExistente));
 
@@ -88,6 +90,6 @@ class AgendarConsultaUseCaseTest {
         UUID medicoId = UUID.randomUUID();
         LocalDateTime dataHora = LocalDateTime.now().plusDays(1);
 
-        return new Consulta(pacienteId, medicoId, dataHora, "Consulta de rotina", StatusConsulta.AGENDADA);
+        return new Consulta(pacienteId, medicoId, dataHora, "Consulta de rotina");
     }
 }

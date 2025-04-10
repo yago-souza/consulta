@@ -1,7 +1,6 @@
 package com.fiap.postech.consultas.interfaces.dtos;
 
 import com.fiap.postech.consultas.domain.model.Consulta;
-import com.fiap.postech.consultas.domain.enums.StatusConsulta;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -13,15 +12,13 @@ public class AgendamentoRequest {
     private UUID medicoId;
     private LocalDateTime horario;
     private String exame;
-    private StatusConsulta especialidade;
 
     public Consulta toDomain() {
         return new Consulta(
                 pacienteId,
                 medicoId,
                 horario,
-                exame,
-                especialidade
+                exame
         );
     }
 }

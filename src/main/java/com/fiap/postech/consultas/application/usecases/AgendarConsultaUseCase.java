@@ -1,5 +1,6 @@
 package com.fiap.postech.consultas.application.usecases;
 
+import com.fiap.postech.consultas.domain.enums.StatusConsulta;
 import com.fiap.postech.consultas.domain.exception.ConflitoHorarioMedicoException;
 import com.fiap.postech.consultas.domain.exception.ConflitoHorarioPacienteException;
 import com.fiap.postech.consultas.domain.exception.DataConsultaInvalidaException;
@@ -23,7 +24,7 @@ public class AgendarConsultaUseCase {
         validarDataFutura(consulta);
         validarConflitoDeHorarioMedico(consulta);
         validarConflitoDeHorarioPaciente(consulta);
-
+        consulta.setStatus(StatusConsulta.AGENDADA);
         consultaRepository.salvar(consulta);
     }
 
@@ -53,4 +54,3 @@ public class AgendarConsultaUseCase {
         }
     }
 }
-

@@ -17,11 +17,11 @@ public class Consulta {
     private String exame;
     private StatusConsulta status;
 
-    public Consulta(UUID pacienteId, UUID medicoId, LocalDateTime dataHora, String exame, StatusConsulta status) {
+    public Consulta(UUID pacienteId, UUID medicoId, LocalDateTime dataHora, String exame) {
         this.pacienteId = pacienteId;
         this.medicoId = medicoId;
         this.dataHora = dataHora;
         this.exame = exame;
-        this.status = status;
     }
+
 }

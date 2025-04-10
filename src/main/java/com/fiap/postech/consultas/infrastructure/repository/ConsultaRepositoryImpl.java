@@ -10,7 +10,8 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 public class ConsultaRepositoryImpl implements ConsultaRepository {
@@ -34,7 +35,7 @@ public class ConsultaRepositoryImpl implements ConsultaRepository {
         return jpaRepository.findByDataHoraBetween(inicioDoDia, fimDoDia)
                 .stream()
                 .map(ConsultaMapper::toDomain)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
@@ -42,7 +43,7 @@ public class ConsultaRepositoryImpl implements ConsultaRepository {
         return jpaRepository.findByDataHora(horario)
                 .stream()
                 .map(ConsultaMapper::toDomain)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
@@ -50,6 +51,12 @@ public class ConsultaRepositoryImpl implements ConsultaRepository {
         return jpaRepository.findByDataHoraBetween(inicio, fim)
                 .stream()
                 .map(ConsultaMapper::toDomain)
-                .collect(Collectors.toUnmodifiableList());
+                .toList();
+    }
+
+    @Override
+    public Optional<Consulta> buscarPorId(UUID consultaId) {
+        return jpaRepository.findById(consultaId)
+                .map(ConsultaMapper::toDomain);
     }
 }
