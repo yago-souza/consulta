@@ -3,6 +3,7 @@ package com.fiap.postech.consultas.application.usecases;
 import com.fiap.postech.consultas.domain.enums.StatusConsulta;
 import com.fiap.postech.consultas.domain.exception.ConflitoHorarioMedicoException;
 import com.fiap.postech.consultas.domain.exception.ConflitoHorarioPacienteException;
+import com.fiap.postech.consultas.domain.exception.ConsultaJaExisteException;
 import com.fiap.postech.consultas.domain.exception.DataConsultaInvalidaException;
 import com.fiap.postech.consultas.domain.model.Consulta;
 import com.fiap.postech.consultas.domain.repository.ConsultaRepository;
@@ -20,12 +21,14 @@ public class AgendarConsultaUseCase {
         this.consultaRepository = consultaRepository;
     }
 
-    public void executar(Consulta consulta) {
+    public Consulta executar(Consulta consulta) {
         validarDataFutura(consulta);
         validarConflitoDeHorarioMedico(consulta);
         validarConflitoDeHorarioPaciente(consulta);
+        validarConsultaDuplicada(consulta);
+
         consulta.setStatus(StatusConsulta.AGENDADA);
-        consultaRepository.salvar(consulta);
+        return consultaRepository.salvar(consulta);
     }
 
     private void validarDataFutura(Consulta consulta) {
@@ -53,4 +56,19 @@ public class AgendarConsultaUseCase {
             throw new ConflitoHorarioPacienteException("O paciente já possui uma consulta nesse horário.");
         }
     }
+
+    private void validarConsultaDuplicada(Consulta consulta) {
+        List<Consulta> consultasNoHorario = consultaRepository.buscarConsultasParaHorario(consulta.getDataHora());
+        boolean consultaDuplicada = consultasNoHorario.stream()
+                .anyMatch(c ->
+                        c.getMedicoId().equals(consulta.getMedicoId()) &&
+                                c.getPacienteId().equals(consulta.getPacienteId()) &&
+                                c.getDataHora().equals(consulta.getDataHora())
+                );
+
+        if (consultaDuplicada) {
+            throw new ConsultaJaExisteException("Já existe uma consulta agendada com esses dados.");
+        }
+    }
 }
+

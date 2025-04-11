@@ -7,7 +7,8 @@ import com.fiap.postech.consultas.application.usecases.ConfirmaConsultaUseCase;
 import com.fiap.postech.consultas.domain.model.Consulta;
 import com.fiap.postech.consultas.infrastructure.repository.mapper.ConsultaMapper;
 import com.fiap.postech.consultas.interfaces.dtos.AgendamentoRequest;
-import com.fiap.postech.consultas.interfaces.dtos.ConsultaResponse;
+import com.fiap.postech.consultas.interfaces.dtos.ConsultaResponseDTO;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,30 +32,30 @@ public class ConsultaController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ConsultaResponse>> listarConsultas() {
+    public ResponseEntity<List<ConsultaResponseDTO>> listarConsultas() {
         List<Consulta> consultas = buscarTodasConsultasUseCase.executar();
-        List<ConsultaResponse> response = consultas.stream()
+        List<ConsultaResponseDTO> response = consultas.stream()
                 .map(ConsultaMapper::toResponse)
                 .toList();
         return ResponseEntity.ok(response);
     }
 
     @PostMapping
-    public ResponseEntity<String> agendar(@RequestBody AgendamentoRequest request) {
-        Consulta consulta = request.toDomain();
-        agendarConsulta.executar(consulta);
-        return ResponseEntity.ok("Consulta agendada com sucesso");
+    public ResponseEntity<ConsultaResponseDTO> agendar(@RequestBody AgendamentoRequest dto) {
+        Consulta novaConsulta = ConsultaMapper.toDomainFromDTO(dto);
+        Consulta consultaSalva = agendarConsulta.executar(novaConsulta);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ConsultaMapper.toResponse(consultaSalva));
     }
 
     @PatchMapping("/{id}/cancelar")
-    public ResponseEntity<Consulta> cancelarConsulta(@PathVariable UUID id) {
-        Consulta consultaCancelada = cancelaConsultaUseCase.executar(id);
-        return ResponseEntity.ok(consultaCancelada);
+    public ResponseEntity<ConsultaResponseDTO> cancelar(@PathVariable UUID id) {
+        Consulta consulta = cancelaConsultaUseCase.executar(id);
+        return ResponseEntity.ok(ConsultaMapper.toResponse(consulta));
     }
 
     @PatchMapping("/{id}/confirmar")
-    public ResponseEntity<Consulta> confirmarConsulta(@PathVariable UUID id) {
-        Consulta consultaConfirmada = confirmaConsultaUseCase.executar(id);
-        return ResponseEntity.ok(consultaConfirmada);
+    public ResponseEntity<ConsultaResponseDTO> confirmar(@PathVariable UUID id) {
+        Consulta consulta = confirmaConsultaUseCase.executar(id);
+        return ResponseEntity.ok(ConsultaMapper.toResponse(consulta));
     }
 }

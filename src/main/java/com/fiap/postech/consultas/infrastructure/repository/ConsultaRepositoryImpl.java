@@ -22,9 +22,9 @@ public class ConsultaRepositoryImpl implements ConsultaRepository {
     }
 
     @Override
-    public void salvar(Consulta consulta) {
+    public Consulta salvar(Consulta consulta) {
         ConsultaEntity entity = ConsultaMapper.toEntity(consulta);
-        jpaRepository.save(entity);
+        return ConsultaMapper.toDomain(jpaRepository.save(entity));
     }
 
     @Override

@@ -8,7 +8,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface ConsultaRepository {
-    void salvar(Consulta consulta);
+    Consulta salvar(Consulta consulta);
     Optional<Consulta> buscarPorId(UUID consultaId);
     List<Consulta> buscarConsultasEntre(LocalDateTime agora, LocalDateTime umaHoraDepois);
     List<Consulta> buscarConsultasParaHorario(LocalDateTime horario);

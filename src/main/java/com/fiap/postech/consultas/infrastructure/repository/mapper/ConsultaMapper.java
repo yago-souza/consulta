@@ -2,7 +2,8 @@ package com.fiap.postech.consultas.infrastructure.repository.mapper;
 
 import com.fiap.postech.consultas.domain.model.Consulta;
 import com.fiap.postech.consultas.infrastructure.repository.jpa.ConsultaEntity;
-import com.fiap.postech.consultas.interfaces.dtos.ConsultaResponse;
+import com.fiap.postech.consultas.interfaces.dtos.AgendamentoRequest;
+import com.fiap.postech.consultas.interfaces.dtos.ConsultaResponseDTO;
 
 public class ConsultaMapper {
 
@@ -31,9 +32,8 @@ public class ConsultaMapper {
         return consulta;
     }
 
-
-    public static ConsultaResponse toResponse(Consulta consulta) {
-        return new ConsultaResponse(
+    public static ConsultaResponseDTO toResponse(Consulta consulta) {
+        return new ConsultaResponseDTO(
                 consulta.getId(),
                 consulta.getPacienteId(),
                 consulta.getMedicoId(),
@@ -41,5 +41,14 @@ public class ConsultaMapper {
                 consulta.getExame(),
                 consulta.getStatus()
         );
+    }
+
+    public static Consulta toDomainFromDTO (AgendamentoRequest dto) {
+        Consulta consulta = new Consulta();
+        consulta.setPacienteId(dto.getPacienteId());
+        consulta.setMedicoId(dto.getMedicoId());
+        consulta.setDataHora(dto.getHorario());
+        consulta.setExame(dto.getExame());
+        return consulta;
     }
 }
