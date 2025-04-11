@@ -1,8 +1,7 @@
 package com.fiap.postech.consultas.infrastructure.repository.jpa;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.fiap.postech.consultas.domain.enums.StatusConsulta;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,9 +17,11 @@ import java.util.UUID;
 public class ConsultaEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
     private UUID pacienteId;
     private UUID medicoId;
     private LocalDateTime dataHora;
     private String exame;
+    private StatusConsulta status;
 }

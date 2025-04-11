@@ -7,7 +7,6 @@ import com.fiap.postech.consultas.infrastructure.repository.jpa.JpaConsultaRepos
 import com.fiap.postech.consultas.infrastructure.repository.mapper.ConsultaMapper;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -29,34 +28,29 @@ public class ConsultaRepositoryImpl implements ConsultaRepository {
     }
 
     @Override
-    public List<Consulta> buscarConsultasParaDia(LocalDate data) {
-        LocalDateTime inicioDoDia = data.atStartOfDay();
-        LocalDateTime fimDoDia = data.atTime(23, 59, 59);
-        return jpaRepository.findByDataHoraBetween(inicioDoDia, fimDoDia)
-                .stream()
+    public Optional<Consulta> buscarPorId(UUID consultaId) {
+        return jpaRepository.findById(consultaId)
+                .map(ConsultaMapper::toDomain);
+    }
+
+    @Override
+    public List<Consulta> buscarConsultasEntre(LocalDateTime agora, LocalDateTime umaHoraDepois) {
+        return jpaRepository.findByDataHoraBetween(agora, umaHoraDepois).stream()
                 .map(ConsultaMapper::toDomain)
                 .toList();
     }
 
     @Override
     public List<Consulta> buscarConsultasParaHorario(LocalDateTime horario) {
-        return jpaRepository.findByDataHora(horario)
-                .stream()
+        return jpaRepository.findByDataHora(horario).stream()
                 .map(ConsultaMapper::toDomain)
                 .toList();
     }
 
     @Override
-    public List<Consulta> buscarConsultasEntre(LocalDateTime inicio, LocalDateTime fim) {
-        return jpaRepository.findByDataHoraBetween(inicio, fim)
-                .stream()
+    public List<Consulta> buscarTodas() {
+        return jpaRepository.findAll().stream()
                 .map(ConsultaMapper::toDomain)
                 .toList();
-    }
-
-    @Override
-    public Optional<Consulta> buscarPorId(UUID consultaId) {
-        return jpaRepository.findById(consultaId)
-                .map(ConsultaMapper::toDomain);
     }
 }

@@ -4,19 +4,18 @@ import com.fiap.postech.consultas.domain.model.Consulta;
 import com.fiap.postech.consultas.domain.repository.ConsultaRepository;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-public class BuscarConsultasPorPeriodoUseCase {
+public class BuscarTodasConsultasUseCase {
 
     private final ConsultaRepository consultaRepository;
 
-    public BuscarConsultasPorPeriodoUseCase(ConsultaRepository consultaRepository) {
+    public BuscarTodasConsultasUseCase(ConsultaRepository consultaRepository) {
         this.consultaRepository = consultaRepository;
     }
 
-    public List<Consulta> executar(LocalDateTime inicio, LocalDateTime fim) {
-        return consultaRepository.buscarConsultasEntre(inicio, fim);
+    public List<Consulta> executar() {
+        return consultaRepository.buscarTodas();
     }
 }

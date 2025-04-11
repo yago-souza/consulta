@@ -2,6 +2,7 @@ package com.fiap.postech.consultas.infrastructure.repository.mapper;
 
 import com.fiap.postech.consultas.domain.model.Consulta;
 import com.fiap.postech.consultas.infrastructure.repository.jpa.ConsultaEntity;
+import com.fiap.postech.consultas.interfaces.dtos.ConsultaResponse;
 
 public class ConsultaMapper {
 
@@ -15,6 +16,7 @@ public class ConsultaMapper {
         entity.setMedicoId(consulta.getMedicoId());
         entity.setDataHora(consulta.getDataHora());
         entity.setExame(consulta.getExame());
+        entity.setStatus(consulta.getStatus());
         return entity;
     }
 
@@ -25,6 +27,19 @@ public class ConsultaMapper {
         consulta.setMedicoId(entity.getMedicoId());
         consulta.setDataHora(entity.getDataHora());
         consulta.setExame(entity.getExame());
+        consulta.setStatus(entity.getStatus());
         return consulta;
+    }
+
+
+    public static ConsultaResponse toResponse(Consulta consulta) {
+        return new ConsultaResponse(
+                consulta.getId(),
+                consulta.getPacienteId(),
+                consulta.getMedicoId(),
+                consulta.getDataHora(),
+                consulta.getExame(),
+                consulta.getStatus()
+        );
     }
 }
