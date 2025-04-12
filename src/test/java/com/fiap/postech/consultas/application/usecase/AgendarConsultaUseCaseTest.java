@@ -18,7 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
+import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.any;
@@ -44,9 +44,9 @@ class AgendarConsultaUseCaseTest {
     @BeforeEach
     void setUp() {
         consulta = new Consulta();
-        consulta.setId(UUID.randomUUID());
-        consulta.setMedicoId(UUID.randomUUID());
-        consulta.setPacienteId(UUID.randomUUID());
+        consulta.setId(new Random().nextLong());
+        consulta.setMedicoId(new Random().nextLong());
+        consulta.setPacienteId(new Random().nextLong());
         consulta.setDataHora(LocalDateTime.now().plusDays(1));
     }
 
@@ -79,7 +79,7 @@ class AgendarConsultaUseCaseTest {
     @Test
     void deveLancarExcecaoParaConflitoComOutroHorarioDoPaciente() {
         Consulta conflito = new Consulta();
-        conflito.setMedicoId(UUID.randomUUID());
+        conflito.setMedicoId(new Random().nextLong());
         conflito.setPacienteId(consulta.getPacienteId());
         when(consultaRepository.buscarConsultasParaHorario(any())).thenReturn(List.of(conflito));
 

@@ -6,8 +6,6 @@ import com.fiap.postech.consultas.domain.model.Consulta;
 import com.fiap.postech.consultas.domain.repository.ConsultaRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
-
 @Service
 public class CancelaConsultaUseCase {
 
@@ -17,7 +15,7 @@ public class CancelaConsultaUseCase {
         this.consultaRepository = consultaRepository;
     }
 
-    public Consulta executar(UUID consultaId) {
+    public Consulta executar(Long consultaId) {
         Consulta consulta = consultaRepository.buscarPorId(consultaId)
                 .orElseThrow(() -> new ConsultaNaoEncontradaException("Consulta não encontrada com o ID: " + consultaId));
 

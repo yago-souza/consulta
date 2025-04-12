@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Entity
 @Table(name = "consultas")
@@ -18,9 +17,9 @@ public class ConsultaEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID id;
-    private UUID pacienteId;
-    private UUID medicoId;
+    private Long id;
+    private Long pacienteId;
+    private Long medicoId;
     private LocalDateTime dataHora;
     private String exame;
     @Enumerated(EnumType.STRING)

@@ -12,7 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
-import java.util.UUID;
+import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -31,7 +31,7 @@ class CancelaConsultaUseCaseTest {
     @Test
     void deveCancelarConsultaComSucesso() {
         // Arrange
-        UUID consultaId = UUID.randomUUID();
+        Long consultaId = new Random().nextLong();
         Consulta consulta = new Consulta();
         consulta.setId(consultaId);
         consulta.setStatus(StatusConsulta.AGENDADA);
@@ -49,7 +49,7 @@ class CancelaConsultaUseCaseTest {
     @Test
     void deveLancarExcecaoSeConsultaNaoForEncontrada() {
         // Arrange
-        UUID consultaId = UUID.randomUUID();
+        Long consultaId = new Random().nextLong();
         when(consultaRepository.buscarPorId(consultaId)).thenReturn(Optional.empty());
 
         // Act & Assert

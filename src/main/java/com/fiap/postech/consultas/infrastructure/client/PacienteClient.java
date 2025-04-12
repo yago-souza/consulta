@@ -7,8 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.UUID;
-
 @Service
 public class PacienteClient {
 
@@ -18,7 +16,7 @@ public class PacienteClient {
         this.restTemplate = restTemplate;
     }
 
-    public void validarPacienteExistente(UUID pacienteId) {
+    public void validarPacienteExistente(Long pacienteId) {
         try {
             restTemplate.getForEntity("http://api-pacientes/pacientes/" + pacienteId, Void.class);
         } catch (HttpClientErrorException.NotFound e) {
@@ -26,7 +24,7 @@ public class PacienteClient {
         }
     }
 
-    public PacienteResponse buscarPaciente(UUID pacienteId) {
+    public PacienteResponse buscarPaciente(Long pacienteId) {
         try {
             ResponseEntity<PacienteResponse> response = restTemplate.getForEntity(
                     "http://api-pacientes/pacientes/" + pacienteId,

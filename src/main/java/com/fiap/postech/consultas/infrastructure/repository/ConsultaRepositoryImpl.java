@@ -10,7 +10,6 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Repository
 public class ConsultaRepositoryImpl implements ConsultaRepository {
@@ -28,7 +27,7 @@ public class ConsultaRepositoryImpl implements ConsultaRepository {
     }
 
     @Override
-    public Optional<Consulta> buscarPorId(UUID consultaId) {
+    public Optional<Consulta> buscarPorId(Long consultaId) {
         return jpaRepository.findById(consultaId)
                 .map(ConsultaMapper::toDomain);
     }

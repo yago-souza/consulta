@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
+import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -31,8 +31,8 @@ class BuscarConsultasPorPeriodoUseCaseTest {
         LocalDateTime inicio = LocalDateTime.of(2025, 4, 10, 10, 0);
         LocalDateTime fim = LocalDateTime.of(2025, 4, 10, 12, 0);
 
-        Consulta consulta1 = new Consulta(UUID.randomUUID(), UUID.randomUUID(), inicio.plusMinutes(30), "Consulta 1");
-        Consulta consulta2 = new Consulta(UUID.randomUUID(), UUID.randomUUID(), inicio.plusMinutes(90), "Consulta 2");
+        Consulta consulta1 = new Consulta(new Random().nextLong(), new Random().nextLong(), inicio.plusMinutes(30), "Consulta 1");
+        Consulta consulta2 = new Consulta(new Random().nextLong(), new Random().nextLong(), inicio.plusMinutes(90), "Consulta 2");
         List<Consulta> consultas = Arrays.asList(consulta1, consulta2);
 
         when(consultaRepository.buscarConsultasEntre(inicio, fim)).thenReturn(consultas);

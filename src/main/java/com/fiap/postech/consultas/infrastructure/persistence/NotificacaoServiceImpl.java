@@ -26,7 +26,7 @@ public class NotificacaoServiceImpl {
         // Simulação de envio
         logger.info("Enviando e-mail para {}: {} ", email, mensagem);
 
-        // Aqui entraria integração com serviço real de envio de e-mail ou outro canal.
+        // TODO Aqui entraria integração com serviço real de envio de e-mail ou outro canal.
     }
 }
 

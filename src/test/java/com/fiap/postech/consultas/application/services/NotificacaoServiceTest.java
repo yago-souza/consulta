@@ -10,7 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
+import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.Mockito.when;
@@ -26,7 +26,7 @@ class NotificacaoServiceTest {
 
     @Test
     void deveEnviarLembreteConsultaComSucesso() {
-        UUID pacienteId = UUID.randomUUID();
+        Long pacienteId = new Random().nextLong();
         LocalDateTime dataConsulta = LocalDateTime.of(2025, 4, 20, 14, 30);
 
         PacienteResponse pacienteResponse = new PacienteResponse();

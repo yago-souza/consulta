@@ -5,19 +5,18 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Data
 @NoArgsConstructor
 public class Consulta {
-    private UUID id;
-    private UUID pacienteId;
-    private UUID medicoId;
+    private Long id;
+    private Long pacienteId;
+    private Long medicoId;
     private LocalDateTime dataHora;
     private String exame;
     private StatusConsulta status;
 
-    public Consulta(UUID pacienteId, UUID medicoId, LocalDateTime dataHora, String exame) {
+    public Consulta(Long pacienteId, Long medicoId, LocalDateTime dataHora, String exame) {
         this.pacienteId = pacienteId;
         this.medicoId = medicoId;
         this.dataHora = dataHora;

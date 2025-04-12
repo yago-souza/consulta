@@ -5,14 +5,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Data
 @AllArgsConstructor
 public class ConsultaResponseDTO {
-    private UUID id;
-    private UUID pacienteId;
-    private UUID medicoId;
+    private Long id;
+    private Long pacienteId;
+    private Long medicoId;
     private LocalDateTime dataHora;
     private String exame;
     private StatusConsulta status;
