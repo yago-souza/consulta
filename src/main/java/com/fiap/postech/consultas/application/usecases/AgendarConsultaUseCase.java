@@ -3,10 +3,11 @@ package com.fiap.postech.consultas.application.usecases;
 import com.fiap.postech.consultas.domain.enums.StatusConsulta;
 import com.fiap.postech.consultas.domain.exception.ConflitoHorarioMedicoException;
 import com.fiap.postech.consultas.domain.exception.ConflitoHorarioPacienteException;
-import com.fiap.postech.consultas.domain.exception.ConsultaJaExisteException;
 import com.fiap.postech.consultas.domain.exception.DataConsultaInvalidaException;
 import com.fiap.postech.consultas.domain.model.Consulta;
 import com.fiap.postech.consultas.domain.repository.ConsultaRepository;
+import com.fiap.postech.consultas.infrastructure.client.MedicoClient;
+import com.fiap.postech.consultas.infrastructure.client.PacienteClient;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -16,19 +17,27 @@ import java.util.List;
 public class AgendarConsultaUseCase {
 
     private final ConsultaRepository consultaRepository;
+    private final PacienteClient pacienteClient;
+    private final MedicoClient medicoClient;
 
-    public AgendarConsultaUseCase(ConsultaRepository consultaRepository) {
-        this.consultaRepository = consultaRepository;
+    public AgendarConsultaUseCase(ConsultaRepository consultaRepository1, PacienteClient pacienteClient, MedicoClient medicoClient) {
+        this.consultaRepository = consultaRepository1;
+        this.pacienteClient = pacienteClient;
+        this.medicoClient = medicoClient;
     }
 
     public Consulta executar(Consulta consulta) {
+        validarExistenciaPacienteEMedico(consulta);
         validarDataFutura(consulta);
         validarConflitoDeHorarioMedico(consulta);
         validarConflitoDeHorarioPaciente(consulta);
-        validarConsultaDuplicada(consulta);
-
         consulta.setStatus(StatusConsulta.AGENDADA);
         return consultaRepository.salvar(consulta);
+    }
+
+    private void validarExistenciaPacienteEMedico(Consulta consulta) {
+        pacienteClient.validarPacienteExistente(consulta.getPacienteId());
+        medicoClient.validarMedicoExistente(consulta.getMedicoId());
     }
 
     private void validarDataFutura(Consulta consulta) {
@@ -54,20 +63,6 @@ public class AgendarConsultaUseCase {
 
         if (conflito) {
             throw new ConflitoHorarioPacienteException("O paciente já possui uma consulta nesse horário.");
-        }
-    }
-
-    private void validarConsultaDuplicada(Consulta consulta) {
-        List<Consulta> consultasNoHorario = consultaRepository.buscarConsultasParaHorario(consulta.getDataHora());
-        boolean consultaDuplicada = consultasNoHorario.stream()
-                .anyMatch(c ->
-                        c.getMedicoId().equals(consulta.getMedicoId()) &&
-                                c.getPacienteId().equals(consulta.getPacienteId()) &&
-                                c.getDataHora().equals(consulta.getDataHora())
-                );
-
-        if (consultaDuplicada) {
-            throw new ConsultaJaExisteException("Já existe uma consulta agendada com esses dados.");
         }
     }
 }

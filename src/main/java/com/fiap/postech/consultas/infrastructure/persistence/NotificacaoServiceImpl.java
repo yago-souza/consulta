@@ -1,7 +1,7 @@
 package com.fiap.postech.consultas.infrastructure.persistence;
 
 import com.fiap.postech.consultas.domain.model.Consulta;
-import com.fiap.postech.consultas.infrastructure.PacienteClient;
+import com.fiap.postech.consultas.infrastructure.client.PacienteClient;
 import com.fiap.postech.consultas.infrastructure.PacienteResponse;
 import org.slf4j.LoggerFactory;
 

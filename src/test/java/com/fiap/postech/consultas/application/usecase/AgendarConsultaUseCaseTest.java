@@ -7,89 +7,83 @@ import com.fiap.postech.consultas.domain.exception.ConflitoHorarioPacienteExcept
 import com.fiap.postech.consultas.domain.exception.DataConsultaInvalidaException;
 import com.fiap.postech.consultas.domain.model.Consulta;
 import com.fiap.postech.consultas.domain.repository.ConsultaRepository;
+import com.fiap.postech.consultas.infrastructure.client.MedicoClient;
+import com.fiap.postech.consultas.infrastructure.client.PacienteClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 class AgendarConsultaUseCaseTest {
 
+    @Mock
     private ConsultaRepository consultaRepository;
-    private AgendarConsultaUseCase useCase;
+
+    @Mock
+    private PacienteClient pacienteClient;
+
+    @Mock
+    private MedicoClient medicoClient;
+
+    @InjectMocks
+    private AgendarConsultaUseCase agendarConsultaUseCase;
+
+    private Consulta consulta;
 
     @BeforeEach
     void setUp() {
-        consultaRepository = mock(ConsultaRepository.class);
-        useCase = new AgendarConsultaUseCase(consultaRepository);
+        consulta = new Consulta();
+        consulta.setId(UUID.randomUUID());
+        consulta.setMedicoId(UUID.randomUUID());
+        consulta.setPacienteId(UUID.randomUUID());
+        consulta.setDataHora(LocalDateTime.now().plusDays(1));
     }
 
     @Test
     void deveAgendarConsultaComSucesso() {
-        Consulta consulta = criarConsultaValida();
+        when(consultaRepository.buscarConsultasParaHorario(any())).thenReturn(List.of());
+        when(consultaRepository.salvar(any())).thenReturn(consulta);
 
-        when(consultaRepository.buscarConsultasParaHorario(consulta.getDataHora())).thenReturn(List.of());
+        Consulta consultaAgendada = agendarConsultaUseCase.executar(consulta);
 
-        assertDoesNotThrow(() -> useCase.executar(consulta));
-
-        assertEquals(StatusConsulta.AGENDADA, consulta.getStatus());
-        verify(consultaRepository).salvar(consulta);
+        assertNotNull(consultaAgendada);
+        assertEquals(StatusConsulta.AGENDADA, consultaAgendada.getStatus());
     }
 
     @Test
-    void deveLancarExcecaoQuandoDataForPassada() {
-        Consulta consulta = criarConsultaValida();
-        consulta.setDataHora(LocalDateTime.now().minusHours(1));
-
-        Exception exception = assertThrows(DataConsultaInvalidaException.class, () -> useCase.executar(consulta));
-        assertEquals("A data e hora da consulta devem ser no futuro.", exception.getMessage());
+    void deveLancarExcecaoParaDataNoPassado() {
+        consulta.setDataHora(LocalDateTime.now().minusDays(1));
+        assertThrows(DataConsultaInvalidaException.class, () -> agendarConsultaUseCase.executar(consulta));
     }
 
     @Test
-    void deveLancarExcecaoQuandoMedicoTiverConflitoDeHorario() {
-        Consulta novaConsulta = criarConsultaValida();
+    void deveLancarExcecaoParaConflitoComOutroHorarioDoMedico() {
+        Consulta conflito = new Consulta();
+        conflito.setMedicoId(consulta.getMedicoId());
+        when(consultaRepository.buscarConsultasParaHorario(any())).thenReturn(List.of(conflito));
 
-        Consulta consultaExistente = new Consulta(
-                UUID.randomUUID(), // paciente diferente
-                novaConsulta.getMedicoId(),
-                novaConsulta.getDataHora(),
-                "Outro exame"
-        );
-
-        when(consultaRepository.buscarConsultasParaHorario(novaConsulta.getDataHora()))
-                .thenReturn(List.of(consultaExistente));
-
-        Exception exception = assertThrows(ConflitoHorarioMedicoException.class, () -> useCase.executar(novaConsulta));
-        assertEquals("O médico já possui uma consulta nesse horário.", exception.getMessage());
+        assertThrows(ConflitoHorarioMedicoException.class, () -> agendarConsultaUseCase.executar(consulta));
     }
 
     @Test
-    void deveLancarExcecaoQuandoPacienteTiverConflitoDeHorario() {
-        Consulta novaConsulta = criarConsultaValida();
+    void deveLancarExcecaoParaConflitoComOutroHorarioDoPaciente() {
+        Consulta conflito = new Consulta();
+        conflito.setMedicoId(UUID.randomUUID());
+        conflito.setPacienteId(consulta.getPacienteId());
+        when(consultaRepository.buscarConsultasParaHorario(any())).thenReturn(List.of(conflito));
 
-        Consulta consultaExistente = new Consulta(
-                novaConsulta.getPacienteId(),
-                UUID.randomUUID(),
-                novaConsulta.getDataHora(),
-                "Outro exame"
-        );
-
-        when(consultaRepository.buscarConsultasParaHorario(novaConsulta.getDataHora()))
-                .thenReturn(List.of(consultaExistente));
-
-        Exception exception = assertThrows(ConflitoHorarioPacienteException.class, () -> useCase.executar(novaConsulta));
-        assertEquals("O paciente já possui uma consulta nesse horário.", exception.getMessage());
+        assertThrows(ConflitoHorarioPacienteException.class, () -> agendarConsultaUseCase.executar(consulta));
     }
 
-    private Consulta criarConsultaValida() {
-        UUID pacienteId = UUID.randomUUID();
-        UUID medicoId = UUID.randomUUID();
-        LocalDateTime dataHora = LocalDateTime.now().plusDays(1);
-
-        return new Consulta(pacienteId, medicoId, dataHora, "Consulta de rotina");
-    }
 }
