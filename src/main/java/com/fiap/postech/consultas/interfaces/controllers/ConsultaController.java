@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/consultas")
@@ -48,13 +47,13 @@ public class ConsultaController {
     }
 
     @PatchMapping("/{id}/cancelar")
-    public ResponseEntity<ConsultaResponseDTO> cancelar(@PathVariable UUID id) {
+    public ResponseEntity<ConsultaResponseDTO> cancelar(@PathVariable Long id) {
         Consulta consulta = cancelaConsultaUseCase.executar(id);
         return ResponseEntity.ok(ConsultaMapper.toResponse(consulta));
     }
 
     @PatchMapping("/{id}/confirmar")
-    public ResponseEntity<ConsultaResponseDTO> confirmar(@PathVariable UUID id) {
+    public ResponseEntity<ConsultaResponseDTO> confirmar(@PathVariable Long id) {
         Consulta consulta = confirmaConsultaUseCase.executar(id);
         return ResponseEntity.ok(ConsultaMapper.toResponse(consulta));
     }

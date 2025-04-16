@@ -4,12 +4,11 @@ import com.fiap.postech.consultas.domain.model.Consulta;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Data
 public class AgendamentoRequest {
-    private UUID pacienteId;
-    private UUID medicoId;
+    private Long pacienteId;
+    private Long medicoId;
     private LocalDateTime horario;
     private String exame;
 

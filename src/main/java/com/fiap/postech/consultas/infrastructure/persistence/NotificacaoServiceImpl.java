@@ -1,7 +1,7 @@
 package com.fiap.postech.consultas.infrastructure.persistence;
 
 import com.fiap.postech.consultas.domain.model.Consulta;
-import com.fiap.postech.consultas.infrastructure.PacienteClient;
+import com.fiap.postech.consultas.infrastructure.client.PacienteClient;
 import com.fiap.postech.consultas.infrastructure.PacienteResponse;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +26,7 @@ public class NotificacaoServiceImpl {
         // Simulação de envio
         logger.info("Enviando e-mail para {}: {} ", email, mensagem);
 
-        // Aqui entraria integração com serviço real de envio de e-mail ou outro canal.
+        // TODO Aqui entraria integração com serviço real de envio de e-mail ou outro canal.
     }
 }
 
