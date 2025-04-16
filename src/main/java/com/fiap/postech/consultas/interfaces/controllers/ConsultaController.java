@@ -6,7 +6,7 @@ import com.fiap.postech.consultas.application.usecases.CancelaConsultaUseCase;
 import com.fiap.postech.consultas.application.usecases.ConfirmaConsultaUseCase;
 import com.fiap.postech.consultas.domain.model.Consulta;
 import com.fiap.postech.consultas.infrastructure.repository.mapper.ConsultaMapper;
-import com.fiap.postech.consultas.interfaces.dtos.AgendamentoRequest;
+import com.fiap.postech.consultas.interfaces.dtos.AgendamentoRequestDTO;
 import com.fiap.postech.consultas.interfaces.dtos.ConsultaResponseDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,7 +40,7 @@ public class ConsultaController {
     }
 
     @PostMapping
-    public ResponseEntity<ConsultaResponseDTO> agendar(@RequestBody AgendamentoRequest dto) {
+    public ResponseEntity<ConsultaResponseDTO> agendar(@RequestBody AgendamentoRequestDTO dto) {
         Consulta novaConsulta = ConsultaMapper.toDomainFromDTO(dto);
         Consulta consultaSalva = agendarConsulta.executar(novaConsulta);
         return ResponseEntity.status(HttpStatus.CREATED).body(ConsultaMapper.toResponse(consultaSalva));

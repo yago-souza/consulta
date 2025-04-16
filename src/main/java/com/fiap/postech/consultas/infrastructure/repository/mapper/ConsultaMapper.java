@@ -2,7 +2,7 @@ package com.fiap.postech.consultas.infrastructure.repository.mapper;
 
 import com.fiap.postech.consultas.domain.model.Consulta;
 import com.fiap.postech.consultas.infrastructure.repository.jpa.ConsultaEntity;
-import com.fiap.postech.consultas.interfaces.dtos.AgendamentoRequest;
+import com.fiap.postech.consultas.interfaces.dtos.AgendamentoRequestDTO;
 import com.fiap.postech.consultas.interfaces.dtos.ConsultaResponseDTO;
 
 public class ConsultaMapper {
@@ -43,7 +43,7 @@ public class ConsultaMapper {
         );
     }
 
-    public static Consulta toDomainFromDTO (AgendamentoRequest dto) {
+    public static Consulta toDomainFromDTO (AgendamentoRequestDTO dto) {
         Consulta consulta = new Consulta();
         consulta.setPacienteId(dto.getPacienteId());
         consulta.setMedicoId(dto.getMedicoId());

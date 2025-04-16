@@ -6,7 +6,7 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-public class AgendamentoRequest {
+public class AgendamentoRequestDTO {
     private Long pacienteId;
     private Long medicoId;
     private LocalDateTime horario;

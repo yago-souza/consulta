@@ -2,7 +2,7 @@ package com.fiap.postech.consultas.application.services;
 
 import com.fiap.postech.consultas.domain.model.Consulta;
 import com.fiap.postech.consultas.infrastructure.client.PacienteClient;
-import com.fiap.postech.consultas.infrastructure.PacienteResponse;
+import com.fiap.postech.consultas.interfaces.dtos.PacienteResponseDTO;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
@@ -18,11 +18,11 @@ public class NotificacaoService {
     }
 
     public void enviarLembreteConsulta(Consulta consulta) {
-        PacienteResponse paciente = pacienteClient.buscarPaciente(consulta.getPacienteId());
+        PacienteResponseDTO paciente = pacienteClient.buscarPaciente(consulta.getPacienteId());
 
         String email = paciente.getEmail();
         String mensagem = String.format("Olá %s, você tem uma consulta marcada para %s.",
-                paciente.getNome(),
+                paciente.getFirstName(),
                 consulta.getDataHora().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
 
         // Simulação de envio
