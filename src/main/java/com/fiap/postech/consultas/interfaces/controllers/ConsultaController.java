@@ -58,4 +58,9 @@ public class ConsultaController {
         Consulta consulta = confirmaConsultaUseCase.executar(id);
         return ResponseEntity.ok(ConsultaMapper.toResponse(consulta));
     }
+
+    @GetMapping("/teste-jwt")
+    public ResponseEntity<String> testeJwt() {
+        return ResponseEntity.ok("JWT funcionando!");
+    }
 }
