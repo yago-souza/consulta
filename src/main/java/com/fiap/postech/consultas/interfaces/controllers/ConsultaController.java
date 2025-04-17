@@ -8,12 +8,16 @@ import com.fiap.postech.consultas.domain.model.Consulta;
 import com.fiap.postech.consultas.infrastructure.repository.mapper.ConsultaMapper;
 import com.fiap.postech.consultas.interfaces.dtos.AgendamentoRequestDTO;
 import com.fiap.postech.consultas.interfaces.dtos.ConsultaResponseDTO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/consultas")
 public class ConsultaController {

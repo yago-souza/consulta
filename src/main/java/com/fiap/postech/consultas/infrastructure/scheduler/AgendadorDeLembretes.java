@@ -3,6 +3,7 @@ package com.fiap.postech.consultas.infrastructure.scheduler;
 import com.fiap.postech.consultas.application.usecases.BuscarConsultasPorPeriodoUseCase;
 import com.fiap.postech.consultas.application.usecases.EnviarLembretesUseCase;
 import com.fiap.postech.consultas.domain.model.Consulta;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -10,6 +11,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Slf4j
 @Component
 public class AgendadorDeLembretes {
 
@@ -34,7 +36,7 @@ public class AgendadorDeLembretes {
     @Scheduled(cron = "0 * * * * *") // a cada minuto
     public void enviarLembretesProximos() {
         LocalDateTime agora = LocalDateTime.now();
-        List<Consulta> consultas = buscarConsultasPorPeriodo.executar(agora, agora.plusHours(1));
+        List<Consulta> consultas = buscarConsultasPorPeriodo.executar(agora, agora.plusMinutes(1));
         enviarLembrete.executar(consultas);
     }
 }

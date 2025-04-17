@@ -1,6 +1,8 @@
 spring:
   application:
     name: consultas
+  jackson:
+    time-zone: America/Sao_Paulo
   web:
     encoding:
       charset: UTF-8
