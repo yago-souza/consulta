@@ -49,23 +49,40 @@ public class AgendarConsultaUseCase {
     }
 
     private void validarConflitoDeHorarioMedico(Consulta consulta) {
-        List<Consulta> consultasNoHorario = consultaRepository.buscarConsultasParaHorario(consulta.getDataHora());
-        boolean conflito = consultasNoHorario.stream()
-                .anyMatch(c -> c.getMedicoId().equals(consulta.getMedicoId()));
+        LocalDateTime inicio = consulta.getDataHora();
+        LocalDateTime fim = inicio.plusMinutes(45);
+
+        List<Consulta> consultas = consultaRepository
+                .buscarConsultasEntre(inicio.minusMinutes(45), fim); // Pega possíveis interseções
+
+        boolean conflito = consultas.stream()
+                .filter(c -> c.getMedicoId().equals(consulta.getMedicoId()))
+                .anyMatch(c -> intervaloSobrepoe(c.getDataHora(), c.getDataHora().plusMinutes(45), inicio, fim));
 
         if (conflito) {
-            throw new ConflitoHorarioMedicoException("O médico já possui uma consulta nesse horário.");
+            throw new ConflitoHorarioMedicoException("O médico já possui uma consulta nesse intervalo.");
         }
     }
 
     private void validarConflitoDeHorarioPaciente(Consulta consulta) {
-        List<Consulta> consultasNoHorario = consultaRepository.buscarConsultasParaHorario(consulta.getDataHora());
-        boolean conflito = consultasNoHorario.stream()
-                .anyMatch(c -> c.getPacienteId().equals(consulta.getPacienteId()));
+        LocalDateTime inicio = consulta.getDataHora();
+        LocalDateTime fim = inicio.plusMinutes(45);
+
+        List<Consulta> consultas = consultaRepository
+                .buscarConsultasEntre(inicio.minusMinutes(45), fim); // Pega possíveis interseções
+
+        boolean conflito = consultas.stream()
+                .filter(c -> c.getPacienteId().equals(consulta.getPacienteId()))
+                .anyMatch(c -> intervaloSobrepoe(c.getDataHora(), c.getDataHora().plusMinutes(45), inicio, fim));
 
         if (conflito) {
-            throw new ConflitoHorarioPacienteException("O paciente já possui uma consulta nesse horário.");
+            throw new ConflitoHorarioPacienteException("O paciente já possui uma consulta nesse intervalo.");
         }
     }
+
+    private boolean intervaloSobrepoe(LocalDateTime inicio1, LocalDateTime fim1, LocalDateTime inicio2, LocalDateTime fim2) {
+        return !inicio1.isAfter(fim2) && !inicio2.isAfter(fim1);
+    }
+
 }
 
