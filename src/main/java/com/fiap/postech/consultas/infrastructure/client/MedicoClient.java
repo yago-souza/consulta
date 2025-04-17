@@ -1,14 +1,16 @@
 package com.fiap.postech.consultas.infrastructure.client;
 
-import com.fiap.postech.consultas.domain.exception.MedicoNaoEncontradoException;
+import com.fiap.postech.consultas.domain.exception.PacienteNaoEncontradoException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+@Slf4j
 @Service
 public class MedicoClient {
 
@@ -32,15 +34,17 @@ public class MedicoClient {
 
         HttpEntity<Void> entity = new HttpEntity<>(headers);
 
-        try {
-            restTemplate.exchange(
-                    medicoApiUrl + medicoId,
-                    HttpMethod.GET,
-                    entity,
-                    Void.class
-            );
-        } catch (HttpClientErrorException.NotFound e) {
-            throw new MedicoNaoEncontradoException("Médico com ID " + medicoId + " não encontrado.");
+        ResponseEntity<String> response = restTemplate.exchange(
+                medicoApiUrl + "/doctor-api/doctors/" + medicoId,
+                HttpMethod.GET,
+                entity,
+                String.class
+        );
+        if (response.getStatusCode().is2xxSuccessful()) {
+            String body = response.getBody();
+            if (body != null && body.contains("\"Doctor not found\"")) {
+                throw new PacienteNaoEncontradoException("Médico com ID " + medicoId + " não encontrado.");
+            }
         }
     }
 }
