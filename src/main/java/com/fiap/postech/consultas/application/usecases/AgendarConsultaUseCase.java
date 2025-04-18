@@ -83,6 +83,5 @@ public class AgendarConsultaUseCase {
     private boolean intervaloSobrepoe(LocalDateTime inicio1, LocalDateTime fim1, LocalDateTime inicio2, LocalDateTime fim2) {
         return !inicio1.isAfter(fim2) && !inicio2.isAfter(fim1);
     }
-
 }
 

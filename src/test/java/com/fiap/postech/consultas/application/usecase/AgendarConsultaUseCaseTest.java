@@ -21,8 +21,7 @@ import java.util.List;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class AgendarConsultaUseCaseTest {
@@ -52,18 +51,22 @@ class AgendarConsultaUseCaseTest {
 
     @Test
     void deveAgendarConsultaComSucesso() {
-        when(consultaRepository.buscarConsultasParaHorario(any())).thenReturn(List.of());
+        when(consultaRepository.buscarConsultasEntre(any(), any())).thenReturn(List.of());
         when(consultaRepository.salvar(any())).thenReturn(consulta);
 
         Consulta consultaAgendada = agendarConsultaUseCase.executar(consulta);
 
         assertNotNull(consultaAgendada);
         assertEquals(StatusConsulta.AGENDADA, consultaAgendada.getStatus());
+
+        verify(pacienteClient).validarPacienteExistente(consulta.getPacienteId());
+        verify(medicoClient).validarMedicoExistente(consulta.getMedicoId());
     }
 
     @Test
     void deveLancarExcecaoParaDataNoPassado() {
         consulta.setDataHora(LocalDateTime.now().minusDays(1));
+
         assertThrows(DataConsultaInvalidaException.class, () -> agendarConsultaUseCase.executar(consulta));
     }
 
@@ -71,7 +74,9 @@ class AgendarConsultaUseCaseTest {
     void deveLancarExcecaoParaConflitoComOutroHorarioDoMedico() {
         Consulta conflito = new Consulta();
         conflito.setMedicoId(consulta.getMedicoId());
-        when(consultaRepository.buscarConsultasParaHorario(any())).thenReturn(List.of(conflito));
+        conflito.setDataHora(consulta.getDataHora()); // sobreposição direta
+
+        when(consultaRepository.buscarConsultasEntre(any(), any())).thenReturn(List.of(conflito));
 
         assertThrows(ConflitoHorarioMedicoException.class, () -> agendarConsultaUseCase.executar(consulta));
     }
@@ -79,11 +84,12 @@ class AgendarConsultaUseCaseTest {
     @Test
     void deveLancarExcecaoParaConflitoComOutroHorarioDoPaciente() {
         Consulta conflito = new Consulta();
-        conflito.setMedicoId(new Random().nextLong());
         conflito.setPacienteId(consulta.getPacienteId());
-        when(consultaRepository.buscarConsultasParaHorario(any())).thenReturn(List.of(conflito));
+        conflito.setMedicoId(new Random().nextLong()); // médico diferente
+        conflito.setDataHora(consulta.getDataHora()); // sobreposição direta
+
+        when(consultaRepository.buscarConsultasEntre(any(), any())).thenReturn(List.of(conflito));
 
         assertThrows(ConflitoHorarioPacienteException.class, () -> agendarConsultaUseCase.executar(consulta));
     }
-
 }
