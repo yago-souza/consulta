@@ -36,7 +36,8 @@ public class AgendadorDeLembretes {
     @Scheduled(cron = "0 * * * * *") // a cada minuto
     public void enviarLembretesProximos() {
         LocalDateTime agora = LocalDateTime.now();
-        List<Consulta> consultas = buscarConsultasPorPeriodo.executar(agora, agora.plusMinutes(1));
+        // A cada minuto procura as consultas de uma hora a frente
+        List<Consulta> consultas = buscarConsultasPorPeriodo.executar(agora.plusHours(1), agora.plusHours(1).plusMinutes(1));
         enviarLembrete.executar(consultas);
     }
 }
